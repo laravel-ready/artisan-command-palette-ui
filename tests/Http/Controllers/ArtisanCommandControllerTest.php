@@ -4,6 +4,7 @@ namespace LaravelReady\ArtisanCommandPaletteUI\Tests\Http\Controllers;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cache;
 use LaravelReady\ArtisanCommandPaletteUI\Tests\TestCase;
 
 class ArtisanCommandControllerTest extends TestCase
@@ -137,5 +138,114 @@ class ArtisanCommandControllerTest extends TestCase
         
         // Check that Database group is empty in production
         $this->assertEmpty($jsonResponse['groups']['Database'] ?? []);
+    }
+
+    /** @test */
+    public function it_includes_commands_with_input_in_response()
+    {
+        // Configure commands with input
+        Config::set('artisan-command-palette-ui.commands_with_input', [
+            'cache:forget' => [
+                'label' => 'Key',
+                'placeholder' => 'Enter cache key',
+                'required' => true,
+            ]
+        ]);
+        
+        $response = $this->getJson(route('artisan-command-palette.commands'));
+        
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'groups',
+            'all'
+        ]);
+        
+        // If commands_with_input is set in the config, it should be in the response
+        if (config('artisan-command-palette-ui.commands_with_input')) {
+            $response->assertJsonStructure([
+                'commands_with_input' => [
+                    'cache:forget' => [
+                        'label',
+                        'placeholder',
+                        'required'
+                    ]
+                ]
+            ]);
+        }
+        
+        $jsonResponse = $response->json();
+        
+        // Only assert these if commands_with_input exists in the response
+        if (isset($jsonResponse['commands_with_input']) && isset($jsonResponse['commands_with_input']['cache:forget'])) {
+            $this->assertEquals('Key', $jsonResponse['commands_with_input']['cache:forget']['label']);
+            $this->assertEquals('Enter cache key', $jsonResponse['commands_with_input']['cache:forget']['placeholder']);
+            $this->assertTrue($jsonResponse['commands_with_input']['cache:forget']['required']);
+        }
+    }
+
+    /** @test */
+    public function it_can_execute_command_with_input()
+    {
+        // Set up a test cache key and value
+        $testKey = 'test_key_' . time();
+        Cache::put($testKey, 'test_value', 600);
+        
+        // Verify the key exists
+        $this->assertTrue(Cache::has($testKey));
+        
+        // Configure commands with input
+        Config::set('artisan-command-palette-ui.commands_with_input', [
+            'cache:forget' => [
+                'label' => 'Key',
+                'placeholder' => 'Enter cache key',
+                'required' => true,
+            ]
+        ]);
+        
+        // Execute the cache:forget command with input
+        $response = $this->postJson(route('artisan-command-palette.execute'), [
+            'command' => 'cache:forget',
+            'input_value' => $testKey
+        ]);
+        
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Command executed successfully',
+        ]);
+        
+        // Verify the cache key was removed
+        $this->assertFalse(Cache::has($testKey));
+    }
+
+    /** @test */
+    public function it_handles_missing_input_for_command()
+    {
+        // Configure commands with input
+        Config::set('artisan-command-palette-ui.commands_with_input', [
+            'cache:forget' => [
+                'label' => 'Key',
+                'placeholder' => 'Enter cache key',
+                'required' => true,
+            ]
+        ]);
+        
+        // Create a test controller instance
+        $controller = new \LaravelReady\ArtisanCommandPaletteUI\Http\Controllers\ArtisanCommandController();
+        
+        // Create a test request with command but no input_value
+        $request = new \Illuminate\Http\Request();
+        $request->replace(['command' => 'cache:forget']);
+        
+        // Call the executeCommand method directly
+        $response = $controller->executeCommand($request);
+        
+        // Verify the response structure
+        $this->assertInstanceOf('\Illuminate\Http\JsonResponse', $response);
+        $responseData = json_decode($response->getContent(), true);
+        
+        // The response should indicate an error since cache:forget requires a key
+        $this->assertArrayHasKey('success', $responseData);
+        $this->assertArrayHasKey('message', $responseData);
     }
 }

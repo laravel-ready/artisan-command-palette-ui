@@ -99,6 +99,27 @@
         </div>
 
         <div id="output-global" class="fixed top-4 right-4 z-50 max-w-sm hidden"></div>
+    
+    <!-- Command Input Modal -->
+    <div id="command-input-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 mx-4">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4" id="modal-title">Command Input</h3>
+            <div class="mb-4">
+                <label id="input-label" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Input</label>
+                <input type="text" id="command-input-field" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" placeholder="">
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400" id="current-command-display"></p>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button id="cancel-input" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancel
+                </button>
+                <button id="submit-input" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Run Command
+                </button>
+            </div>
+        </div>
+    </div>
 
         <div class="flex-none h-[45vh] mb-4">
             <div class="w-full overflow-x-auto whitespace-nowrap">
@@ -113,11 +134,19 @@
                                 @foreach($groupCommands as $command)
                                     <div>
                                         <button
-                                            class="w-full px-2 py-1 text-sm text-left border border-blue-500 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded truncate transition-colors command-btn"
+                                            class="w-full px-2 py-1 text-sm text-left border border-blue-500 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded truncate transition-colors command-btn flex items-center justify-between"
                                             data-command="{{ $command['command'] }}"
                                             data-tooltip="{{ $command['description'] }}"
                                         >
-                                            {{ $command['command'] }}
+                                            <span>{{ $command['command'] }}</span>
+                                            <span class="input-icon hidden ml-1 flex-shrink-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" class="text-blue-500 dark:text-blue-400" stroke="currentColor">
+                                                    <path d="M19 7H5C3.34315 7 2 8.34315 2 10V19C2 20.6569 3.34315 22 5 22H19C20.6569 22 22 20.6569 22 19V10C22 8.34315 20.6569 7 19 7Z" stroke-width="1" stroke-linejoin="round"></path>
+                                                    <path d="M12 7V5.53078C12 4.92498 12.4123 4.39693 13 4.25V4.25C13.5877 4.10307 14 3.57502 14 2.96922V2" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                    <path d="M7 12L8 12M11.5 12L12.5 12M16 12L17 12" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                    <path d="M7 17L17 17" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                </svg>
+                                            </span>
                                         </button>
                                     </div>
                                 @endforeach
@@ -147,6 +176,41 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Store commands that require input
+            let commandsWithInput = {};
+            
+            // Fetch commands with input requirements
+            axios.get('{{ route("artisan-command-palette.commands") }}')
+                .then(response => {
+                    if (response.data && response.data.commands_with_input) {
+                        commandsWithInput = response.data.commands_with_input;
+                        
+                        // Mark commands that require input with an icon
+                        Object.keys(commandsWithInput).forEach(commandName => {
+                            const commandButtons = document.querySelectorAll(`.command-btn[data-command="${commandName}"]`);
+                            commandButtons.forEach(button => {
+                                const iconElement = button.querySelector('.input-icon');
+                                if (iconElement) {
+                                    iconElement.classList.remove('hidden');
+                                    iconElement.classList.add('inline-block');
+                                }
+                            });
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching commands with input:', error);
+                });
+                
+            // Command input modal elements
+            const commandInputModal = document.getElementById('command-input-modal');
+            const commandInputField = document.getElementById('command-input-field');
+            const inputLabel = document.getElementById('input-label');
+            const modalTitle = document.getElementById('modal-title');
+            const currentCommandDisplay = document.getElementById('current-command-display');
+            const submitInputBtn = document.getElementById('submit-input');
+            const cancelInputBtn = document.getElementById('cancel-input');
+            
             // Custom tooltip implementation
             const tooltip = document.getElementById('tooltip');
             document.querySelectorAll('[data-tooltip]').forEach(element => {
@@ -168,55 +232,124 @@
             document.querySelectorAll('.command-btn').forEach(button => {
                 button.addEventListener('click', async function() {
                     const command = this.dataset.command;
-                    const originalText = this.textContent;
-
-                    // Disable button and show loading
-                    this.disabled = true;
-                    this.innerHTML = `
-                        <svg class="animate-spin h-4 w-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Running...
-                    `;
-
-                    // Update command status
-                    document.getElementById('current-command').innerHTML = `
-                        <span class="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
-                        Running: ${command}
-                    `;
-
-                    try {
-                        const response = await axios.post('{{ route("artisan-command-palette.execute") }}', {
-                            command: command
-                        });
-
-                        document.getElementById('logs-output').innerHTML = response.data.output || 'Command executed successfully with no output.';
-                        showAlert('success', 'Command executed successfully');
-                        document.getElementById('current-command').innerHTML = `
-                            <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                            ${command}
-                        `;
-                        // Scroll to bottom of output div
-                        const logsOutput = document.getElementById('logs-output');
-                        logsOutput.scrollTop = logsOutput.scrollHeight;
-                    } catch (error) {
-                        const response = error.response?.data;
-                        document.getElementById('logs-output').innerHTML = response?.error || 'Command execution failed.';
-                        showAlert('error', `${response?.message}: ${response?.error}`);
-                        document.getElementById('current-command').innerHTML = `
-                            <span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"></span>
-                            ${command}
-                        `;
-                        // Scroll to bottom of output div
-                        const logsOutput = document.getElementById('logs-output');
-                        logsOutput.scrollTop = logsOutput.scrollHeight;
-                    } finally {
-                        this.disabled = false;
-                        this.textContent = originalText;
+                    const originalHTML = this.innerHTML;
+                    
+                    // Check if command requires input
+                    if (commandsWithInput[command]) {
+                        // Show input modal
+                        const inputConfig = commandsWithInput[command];
+                        modalTitle.textContent = `Input for ${command}`;
+                        inputLabel.textContent = inputConfig.label || 'Input';
+                        commandInputField.placeholder = inputConfig.placeholder || 'Enter input value';
+                        currentCommandDisplay.textContent = `Command: ${command}`;
+                        
+                        // Show modal with flex display
+                        commandInputModal.classList.remove('hidden');
+                        commandInputModal.classList.add('flex');
+                        commandInputField.focus();
+                        
+                        // Store the command button reference for later use
+                        submitInputBtn.dataset.commandButton = button.dataset.command;
+                        return;
                     }
+                    
+                    // For commands without input, proceed as usual
+                    await executeCommand(command, this);
                 });
             });
+            
+            // Handle input submission
+            submitInputBtn.addEventListener('click', async function() {
+                const command = this.dataset.commandButton;
+                const inputValue = commandInputField.value.trim();
+                const buttonElement = document.querySelector(`.command-btn[data-command="${command}"]`);
+                
+                // Validate input if required
+                if (commandsWithInput[command]?.required && !inputValue) {
+                    showAlert('error', 'Input is required for this command');
+                    return;
+                }
+                
+                // Hide modal
+                commandInputModal.classList.add('hidden');
+                commandInputModal.classList.remove('flex');
+                
+                // Execute command with input
+                await executeCommand(command, buttonElement, inputValue);
+                
+                // Reset input field
+                commandInputField.value = '';
+            });
+            
+            // Handle cancel button
+            cancelInputBtn.addEventListener('click', function() {
+                commandInputModal.classList.add('hidden');
+                commandInputModal.classList.remove('flex');
+                commandInputField.value = '';
+            });
+            
+            // Handle Enter key in input field
+            commandInputField.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    submitInputBtn.click();
+                } else if (e.key === 'Escape') {
+                    cancelInputBtn.click();
+                }
+            });
+            
+            // Execute command function
+            async function executeCommand(command, buttonElement, inputValue = null) {
+                const originalHTML = buttonElement.innerHTML;
+
+                // Disable button and show loading
+                buttonElement.disabled = true;
+                buttonElement.innerHTML = `
+                    <svg class="animate-spin h-4 w-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Running...
+                `;
+
+                // Update command status
+                document.getElementById('current-command').innerHTML = `
+                    <span class="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
+                    Running: ${command}${inputValue ? ' ' + inputValue : ''}
+                `;
+
+                try {
+                    const payload = { command: command };
+                    if (inputValue) {
+                        payload.input_value = inputValue;
+                    }
+                    
+                    const response = await axios.post('{{ route("artisan-command-palette.execute") }}', payload);
+
+                    document.getElementById('logs-output').innerHTML = response.data.output || 'Command executed successfully with no output.';
+                    showAlert('success', 'Command executed successfully');
+                    document.getElementById('current-command').innerHTML = `
+                        <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                        ${command}${inputValue ? ' ' + inputValue : ''}
+                    `;
+                    // Scroll to bottom of output div
+                    const logsOutput = document.getElementById('logs-output');
+                    logsOutput.scrollTop = logsOutput.scrollHeight;
+                } catch (error) {
+                    const response = error.response?.data;
+                    document.getElementById('logs-output').innerHTML = response?.error || 'Command execution failed.';
+                    showAlert('error', `${response?.message}: ${response?.error}`);
+                    document.getElementById('current-command').innerHTML = `
+                        <span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                        ${command}
+                    `;
+                    // Scroll to bottom of output div
+                    const logsOutput = document.getElementById('logs-output');
+                    logsOutput.scrollTop = logsOutput.scrollHeight;
+                } finally {
+                    buttonElement.disabled = false;
+                    buttonElement.innerHTML = originalHTML;
+                }
+            }
 
             // Clear logs
             document.getElementById('clear-logs').addEventListener('click', function() {

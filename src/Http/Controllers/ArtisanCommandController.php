@@ -49,20 +49,17 @@ class ArtisanCommandController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    /**
-     * List all available Artisan commands.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function listCommands()
     {
         // Return both predefined command groups and all available commands
         $commandGroups = $this->getCommandGroups();
         $allCommands = $this->getAllCommands();
+        $commandsWithInput = Config::get('artisan-command-palette-ui.commands_with_input', []);
 
         return Response::json([
             'groups' => $commandGroups,
             'all' => $allCommands,
+            'commands_with_input' => $commandsWithInput,
         ]);
     }
 
@@ -100,6 +97,7 @@ class ArtisanCommandController extends Controller
     public function executeCommand(Request $request)
     {
         $command = $request->input('command');
+        $inputValue = $request->input('input_value');
 
         if (empty($command)) {
             return Response::json([
@@ -132,6 +130,12 @@ class ArtisanCommandController extends Controller
                 'message' => 'Error executing command',
                 'error' => "Command '{$commandName}' is not allowed"
             ], 403);
+        }
+
+        // Check if command requires input and append it if provided
+        $commandsWithInput = Config::get('artisan-command-palette-ui.commands_with_input', []);
+        if (array_key_exists($commandName, $commandsWithInput) && !empty($inputValue)) {
+            $command = $command . ' ' . $inputValue;
         }
 
         // Execute the command

@@ -24,6 +24,22 @@ return [
     // Enable/disable command palette in production
     'enabled_in_production' => false,
 
+    // Commands that require input parameters
+    'commands_with_input' => [
+        'cache:forget' => [
+            'label' => 'Key',
+            'placeholder' => 'Enter cache key',
+            'required' => true,
+        ],
+        // Add more commands that require input here
+        // Example:
+        // 'make:model' => [
+        //     'label' => 'Name',
+        //     'placeholder' => 'Enter model name',
+        //     'required' => true,
+        // ],
+    ],
+
     // Predefined command groups
     'command_groups' => [
         'Optimize' => [
