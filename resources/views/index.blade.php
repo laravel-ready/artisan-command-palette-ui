@@ -24,18 +24,32 @@
         }
     </script>
 </head>
-<body class="h-screen overflow-hidden flex flex-col bg-gray-50">
+<body class="h-screen overflow-hidden flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <div class="flex flex-col h-screen p-4">
         <div class="flex-none mb-4">
-            <div class="flex flex-row gap-3 items-center text-2xl font-semibold">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
-                    <path d="M11.2019 4.17208C11.711 3.94264 12.289 3.94264 12.7981 4.17208L21.3982 8.04851C22.2006 8.41016 22.2006 9.58984 21.3982 9.95149L12.7981 13.8279C12.289 14.0574 11.711 14.0574 11.2019 13.8279L2.60175 9.95149C1.79941 9.58984 1.79942 8.41016 2.60176 8.04851L11.2019 4.17208Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M20.1813 13.5L21.3982 14.0485C22.2006 14.4102 22.2006 15.5898 21.3982 15.9515L12.7981 19.8279C12.289 20.0574 11.711 20.0574 11.2019 19.8279L2.60175 15.9515C1.79941 15.5898 1.79942 14.4102 2.60176 14.0485L3.81867 13.5" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <div class="flex flex-row justify-between items-center">
+                <div class="flex flex-row gap-3 items-center text-2xl font-semibold text-gray-800 dark:text-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="text-gray-800 dark:text-gray-200" fill="none">
+                    <path d="M11.2019 4.17208C11.711 3.94264 12.289 3.94264 12.7981 4.17208L21.3982 8.04851C22.2006 8.41016 22.2006 9.58984 21.3982 9.95149L12.7981 13.8279C12.289 14.0574 11.711 14.0574 11.2019 13.8279L2.60175 9.95149C1.79941 9.58984 1.79942 8.41016 2.60176 8.04851L11.2019 4.17208Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M20.1813 13.5L21.3982 14.0485C22.2006 14.4102 22.2006 15.5898 21.3982 15.9515L12.7981 19.8279C12.289 20.0574 11.711 20.0574 11.2019 19.8279L2.60175 15.9515C1.79941 15.5898 1.79942 14.4102 2.60176 14.0485L3.81867 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
 
                 <span>
                     Artisan Commands: {{ config('app.env') }}
                 </span>
+                </div>
+                
+                <!-- Dark mode toggle -->
+                <button id="theme-toggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors">
+                    <!-- Sun icon for dark mode -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <!-- Moon icon for light mode -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -46,15 +60,15 @@
                 <div class="inline-flex gap-4">
                     @foreach($commands as $group => $groupCommands)
                         @if(count($groupCommands) > 0)
-                        <div class="flex-none w-[300px] bg-white p-4 rounded-lg border border-gray-200 h-[43vh] overflow-y-auto">
-                            <div class="text-base font-semibold mb-3 text-gray-700 sticky top-0 bg-white py-2 border-b-2 border-gray-200">
+                        <div class="flex-none w-[300px] bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 h-[43vh] overflow-y-auto">
+                            <div class="text-base font-semibold mb-3 text-gray-700 dark:text-gray-300 sticky top-0 bg-white dark:bg-gray-800 py-2 border-b-2 border-gray-200 dark:border-gray-700">
                                 {{ $group }}
                             </div>
                             <div class="space-y-2">
                                 @foreach($groupCommands as $command)
                                     <div>
                                         <button
-                                            class="w-full px-2 py-1 text-sm text-left border border-blue-500 text-blue-500 hover:bg-blue-50 rounded truncate transition-colors command-btn"
+                                            class="w-full px-2 py-1 text-sm text-left border border-blue-500 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded truncate transition-colors command-btn"
                                             data-command="{{ $command['command'] }}"
                                             data-tooltip="{{ $command['description'] }}"
                                         >
@@ -84,7 +98,7 @@
         </div>
     </div>
 
-    <div id="tooltip" class="absolute hidden z-50 max-w-xs bg-gray-900 text-white text-sm rounded-md px-3 py-2"></div>
+    <div id="tooltip" class="absolute hidden z-50 max-w-xs bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-md px-3 py-2"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -166,12 +180,36 @@
                 document.getElementById('command-status').innerHTML = '';
             });
 
+            // Dark mode toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            // Check for saved theme preference or use the system preference
+            if (localStorage.getItem('color-theme') === 'dark' || 
+                (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            
+            // Toggle dark mode on button click
+            themeToggle.addEventListener('click', function() {
+                // Toggle dark class on html element
+                document.documentElement.classList.toggle('dark');
+                
+                // Update localStorage
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    localStorage.setItem('color-theme', 'light');
+                }
+            });
+            
             // Alert function
             function showAlert(type, message) {
                 const alertDiv = document.getElementById('output-global');
                 alertDiv.className = `fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg ${
-                    type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' :
-                    'bg-red-100 text-red-800 border border-red-200'
+                    type === 'success' ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800' :
+                    'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800'
                 }`;
                 alertDiv.innerHTML = message;
                 alertDiv.style.display = 'block';
