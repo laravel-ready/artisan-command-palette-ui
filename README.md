@@ -9,11 +9,11 @@
 
 A beautiful UI for Laravel Artisan commands that provides a command palette interface to search and execute Artisan commands directly from your browser.
 
-## Preview
+## 🖼️ Preview
 
 ![Preview](./preview.gif)
 
-## Installation
+## 📦 Installation
 
 You can install the package via composer:
 
@@ -21,7 +21,7 @@ You can install the package via composer:
 composer require laravel-ready/artisan-command-palette-ui
 ```
 
-## Configuration
+## ⚙️ Configuration
 
 Publish the configuration file:
 
@@ -31,7 +31,7 @@ php artisan vendor:publish --provider="LaravelReady\ArtisanCommandPaletteUI\Arti
 
 This will create a `config/artisan-command-palette-ui.php` file where you can modify the package settings.
 
-## Usage
+## 🚀 Usage
 
 After installation, you can access the command palette UI at `/artisan-command-palette` (or the custom route prefix you defined in the config).
 
@@ -41,16 +41,16 @@ The UI allows you to:
 - View command descriptions and signatures
 - Execute commands and see their output in real-time
 
-## Security
+## 🔒 Security
 
-By default, the command palette is protected by the `web` and `auth` middleware, meaning only authenticated users can access it.
+By default, the command palette is protected by the `auth` middleware, meaning only authenticated users can access it.
 
 For additional security:
 
 - The package is disabled in production environments by default (can be enabled in config)
 - You can exclude sensitive commands in the config file
 
-## Frontend Development
+## 💻 Frontend Development
 
 If you want to modify the frontend assets, you can publish the views:
 
@@ -58,7 +58,7 @@ If you want to modify the frontend assets, you can publish the views:
 php artisan vendor:publish --provider="LaravelReady\ArtisanCommandPaletteUI\ArtisanCommandPaletteUIServiceProvider" --tag="views"
 ```
 
-## Testing
+## 🧪 Testing
 
 To run the test suite, you can use the following command:
 
@@ -66,7 +66,7 @@ To run the test suite, you can use the following command:
 composer test
 ```
 
-## License
+## 📄 License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
