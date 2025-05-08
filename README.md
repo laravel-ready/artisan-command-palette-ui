@@ -1,5 +1,12 @@
 # Artisan Command Palette UI
 
+[![relliv Laravel Artisan Command Palette UI](https://preview.dragon-code.pro/relliv/Artisan-Command-Palette-UI.svg?brand=laravel)](https://github.com/laravel-ready/artisan-command-palette-ui)
+
+[![Stable Version][badge_stable]][link_packagist]
+[![Unstable Version][badge_unstable]][link_packagist]
+[![Total Downloads][badge_downloads]][link_packagist]
+[![License][badge_license]][link_license]
+
 A beautiful UI for Laravel Artisan commands that provides a command palette interface to search and execute Artisan commands directly from your browser.
 
 ## Installation
@@ -58,3 +65,15 @@ composer test
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+[badge_downloads]:      https://img.shields.io/packagist/dt/laravel-ready/artisan-command-palette-ui.svg?style=flat-square
+
+[badge_license]:        https://img.shields.io/packagist/l/laravel-ready/artisan-command-palette-ui.svg?style=flat-square
+
+[badge_stable]:         https://img.shields.io/github/v/release/laravel-ready/artisan-command-palette-ui?label=stable&style=flat-square
+
+[badge_unstable]:       https://img.shields.io/badge/unstable-dev--main-orange?style=flat-square
+
+[link_license]:         LICENSE
+
+[link_packagist]:       https://packagist.org/packages/laravel-ready/artisan-command-palette-ui
