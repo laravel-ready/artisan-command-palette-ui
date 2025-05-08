@@ -23,6 +23,51 @@
             }
         }
     </script>
+    <style>
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .dark ::-webkit-scrollbar-track {
+            background: #2d3748;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+        
+        /* Terminal scrollbar styles */
+        .bg-terminal::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+        
+        .bg-terminal::-webkit-scrollbar-thumb {
+            background: #4d4d4d;
+        }
+        
+        .bg-terminal::-webkit-scrollbar-thumb:hover {
+            background: #5d5d5d;
+        }
+    </style>
 </head>
 <body class="h-screen overflow-hidden flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <div class="flex flex-col h-screen p-4">
@@ -56,11 +101,11 @@
         <div id="output-global" class="fixed top-4 right-4 z-50 max-w-sm hidden"></div>
 
         <div class="flex-none h-[45vh] mb-4">
-            <div class="w-full overflow-x-auto whitespace-nowrap scrollbar-thin">
+            <div class="w-full overflow-x-auto whitespace-nowrap">
                 <div class="inline-flex gap-4">
                     @foreach($commands as $group => $groupCommands)
                         @if(count($groupCommands) > 0)
-                        <div class="flex-none w-[300px] bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 h-[43vh] overflow-y-auto">
+                        <div class="flex-none w-[300px] mb-3 bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 h-[43vh] overflow-y-auto">
                             <div class="text-base font-semibold mb-3 text-gray-700 dark:text-gray-300 sticky top-0 bg-white dark:bg-gray-800 py-2 border-b-2 border-gray-200 dark:border-gray-700">
                                 {{ $group }}
                             </div>
