@@ -9,6 +9,10 @@
 
 A beautiful UI for Laravel Artisan commands that provides a command palette interface to search and execute Artisan commands directly from your browser.
 
+## Preview
+
+![Preview](./preview.gif)
+
 ## Installation
 
 You can install the package via composer:
