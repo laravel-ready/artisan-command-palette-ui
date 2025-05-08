@@ -47,6 +47,14 @@ If you want to modify the frontend assets, you can publish the views:
 php artisan vendor:publish --provider="LaravelReady\ArtisanCommandPaletteUI\ArtisanCommandPaletteUIServiceProvider" --tag="views"
 ```
 
+## Testing
+
+To run the test suite, you can use the following command:
+
+```bash
+composer test
+```
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
