@@ -71,11 +71,6 @@ class ArtisanCommandController extends Controller
      *
      * @return array
      */
-    /**
-     * Get all available commands excluding the ones in the excluded list.
-     *
-     * @return array
-     */
     protected function getAllCommands()
     {
         $commands = [];
