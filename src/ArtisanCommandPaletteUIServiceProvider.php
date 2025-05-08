@@ -16,8 +16,17 @@ class ArtisanCommandPaletteUIServiceProvider extends ServiceProvider
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'artisan-command-palette-ui');
 
-        // Load routes
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        // Register routes in a way compatible with all Laravel versions
+        if (version_compare($this->app->version(), '12.0.0', '>=')) {
+            // Laravel 12+ route registration
+            $this->app->booted(function () {
+                $router = $this->app['router'];
+                require __DIR__ . '/../routes/web.php';
+            });
+        } else {
+            // Legacy route registration
+            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        }
 
         // Load assets
         $this->publishes([
@@ -44,7 +53,8 @@ class ArtisanCommandPaletteUIServiceProvider extends ServiceProvider
     {
         // Merge config
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/artisan-command-palette-ui.php', 'artisan-command-palette-ui'
+            __DIR__ . '/../config/artisan-command-palette-ui.php',
+            'artisan-command-palette-ui'
         );
     }
 }

@@ -14,7 +14,7 @@ return [
     'route_prefix' => 'artisan-command-palette',
 
     // Middleware for the command palette routes
-    'middleware' => ['web', 'auth'],
+    'middleware' => [],
 
     // Commands to exclude from the palette
     'excluded_commands' => [

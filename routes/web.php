@@ -5,7 +5,7 @@ use LaravelReady\ArtisanCommandPaletteUI\Http\Controllers\ArtisanCommandControll
 
 Route::group([
     'prefix' => config('artisan-command-palette-ui.route_prefix', 'artisan-command-palette'),
-    'middleware' => config('artisan-command-palette-ui.middleware', ['web', 'auth']),
+    'middleware' => config('artisan-command-palette-ui.middleware', ['auth']),
 ], function () {
     Route::get('/', [ArtisanCommandController::class, 'index'])->name('artisan-command-palette.index');
     Route::get('/commands', [ArtisanCommandController::class, 'listCommands'])->name('artisan-command-palette.commands');

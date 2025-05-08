@@ -3,7 +3,6 @@
 namespace LaravelReady\ArtisanCommandPaletteUI\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
@@ -34,14 +33,14 @@ class ArtisanCommandController extends Controller
         $commandGroups = Config::get('artisan-command-palette-ui.command_groups', []);
         $envRestrictions = Config::get('artisan-command-palette-ui.environment_restricted_groups', []);
         $currentEnv = App::environment();
-        
+
         // Apply environment restrictions
         foreach ($envRestrictions as $group => $allowedEnvs) {
             if (!in_array($currentEnv, $allowedEnvs) && isset($commandGroups[$group])) {
                 $commandGroups[$group] = [];
             }
         }
-        
+
         return $commandGroups;
     }
 
@@ -60,13 +59,13 @@ class ArtisanCommandController extends Controller
         // Return both predefined command groups and all available commands
         $commandGroups = $this->getCommandGroups();
         $allCommands = $this->getAllCommands();
-        
+
         return Response::json([
             'groups' => $commandGroups,
             'all' => $allCommands,
         ]);
     }
-    
+
     /**
      * Get all available commands excluding the ones in the excluded list.
      *
@@ -112,7 +111,7 @@ class ArtisanCommandController extends Controller
     public function executeCommand(Request $request)
     {
         $command = $request->input('command');
-        
+
         if (empty($command)) {
             return Response::json([
                 'success' => false,
@@ -126,8 +125,9 @@ class ArtisanCommandController extends Controller
         $commandName = array_shift($parts);
         $arguments = $parts;
 
-        // Check if command exists
-        if (!Artisan::has($commandName)) {
+        // Check if command exists - compatible with Laravel 8-12
+        $commands = Artisan::all();
+        if (!array_key_exists($commandName, $commands)) {
             return Response::json([
                 'success' => false,
                 'message' => 'Error executing command',
@@ -147,15 +147,13 @@ class ArtisanCommandController extends Controller
 
         // Execute the command
         try {
-            ob_start();
-            $exitCode = Artisan::call($commandName, $this->parseArguments($arguments));
-            $output = ob_get_clean();
+            Artisan::call($command);
+            $output = Artisan::output();
 
             return Response::json([
                 'success' => true,
                 'message' => 'Command executed successfully',
                 'output' => $output,
-                'exit_code' => $exitCode
             ]);
         } catch (\Exception $e) {
             return Response::json([
@@ -175,7 +173,7 @@ class ArtisanCommandController extends Controller
     protected function parseArguments(array $arguments)
     {
         $result = [];
-        
+
         foreach ($arguments as $argument) {
             if (strpos($argument, '=') !== false) {
                 list($key, $value) = explode('=', $argument, 2);
@@ -186,7 +184,7 @@ class ArtisanCommandController extends Controller
                 $result[] = $argument;
             }
         }
-        
+
         return $result;
     }
 }
