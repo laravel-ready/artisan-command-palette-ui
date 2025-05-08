@@ -1,0 +1,28 @@
+{
+  "name": "artisan-command-palette-ui",
+  "version": "1.0.0",
+  "description": "A beautiful UI for Laravel Artisan commands",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "laravel",
+    "artisan",
+    "command-palette",
+    "ui"
+  ],
+  "author": "Laravel Ready",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.3",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.3.1",
+    "vite": "^4.2.1"
+  },
+  "dependencies": {
+    "alpinejs": "^3.12.0"
+  }
+}

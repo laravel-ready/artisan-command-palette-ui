@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.command-palette {
+    @apply max-h-80 overflow-y-auto;
+}
+
+.command-item {
+    @apply p-3 border-b border-gray-200 cursor-pointer hover:bg-gray-100 transition duration-150;
+}
+
+.command-item:last-child {
+    @apply border-b-0;
+}
+
+.output-container {
+    @apply max-h-80 overflow-y-auto font-mono bg-gray-900 text-green-400 p-4 rounded-md;
+}
+
+.loading-spinner {
+    @apply animate-spin h-5 w-5 text-white;
+}
+
+.btn {
+    @apply px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+}
+
+.btn-secondary {
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500;
+}
