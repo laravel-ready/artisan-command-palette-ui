@@ -97,12 +97,6 @@ class ArtisanCommandController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    /**
-     * Execute an Artisan command.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function executeCommand(Request $request)
     {
         $command = $request->input('command');
