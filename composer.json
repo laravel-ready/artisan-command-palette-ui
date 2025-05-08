@@ -1,45 +1,45 @@
 {
-    "name": "laravel-ready/artisan-command-palette-ui",
-    "description": "A UI for Laravel Artisan Command Palette",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Laravel Ready",
-            "email": "info@laravelready.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require": {
-        "php": "^8.0",
-        "illuminate/support": "^8.0|^9.0|^10.0|^11.0"
-    },
-    "require-dev": {
-        "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
-        "phpunit/phpunit": "^9.0|^10.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "LaravelReady\\ArtisanCommandPaletteUI\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "LaravelReady\\ArtisanCommandPaletteUI\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "LaravelReady\\ArtisanCommandPaletteUI\\ArtisanCommandPaletteUIServiceProvider"
-            ]
-        }
-    },
-    "scripts": {
-        "test": "vendor/bin/phpunit"
-    },
-    "config": {
-        "sort-packages": true
+  "name": "laravel-ready/artisan-command-palette-ui",
+  "description": "A UI for Laravel Artisan Command Palette",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Laravel Ready",
+      "email": "info@laravelready.com"
     }
+  ],
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "require": {
+    "php": "^8.0|^8.1|^8.2",
+    "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0",
+    "phpunit/phpunit": "^9.0|^10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "LaravelReady\\ArtisanCommandPaletteUI\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "LaravelReady\\ArtisanCommandPaletteUI\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "LaravelReady\\ArtisanCommandPaletteUI\\ArtisanCommandPaletteUIServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
+  },
+  "config": {
+    "sort-packages": true
+  }
 }
